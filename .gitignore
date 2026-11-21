@@ -1,0 +1,7 @@
+.env
+.env.*
+!.env.exemplo
+estado.json
+*importar_dados*.sql
+supabase/02_*
+*.sqlite3

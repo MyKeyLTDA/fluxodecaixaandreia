@@ -1,0 +1,309 @@
+<!doctype html><html lang="pt-BR"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MyKey Caixa — Nova proposta</title><style>
+*{box-sizing:border-box}body{margin:0;background:#eef2f6;color:#19354c;font:12px Arial}header{background:white;padding:20px;font-size:20px;color:#086ba4;font-weight:bold}main{max-width:1450px;margin:auto;padding:18px}h2{font-size:21px}.card{background:white;padding:13px;border-radius:9px;margin-bottom:10px}.tabs{display:flex;gap:6px;overflow:auto}.tabs button{padding:11px;border:1px solid #bed2df;border-radius:5px;white-space:nowrap;background:#edf5fa;cursor:pointer}.tabs button.on{background:#0877ac;color:white}.filters{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}label{font-weight:bold}select,input{display:block;width:100%;padding:9px;margin-top:5px;border:1px solid #c6d5df;border-radius:4px}.metrics{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.metric{background:#f2f7fb;padding:10px;border-radius:5px}.metric small{display:block;color:#587187;margin-bottom:7px}.metric b{font-size:16px}.sheet{overflow:auto;max-width:100%;border:1px solid #d6e0e8}table{border-collapse:collapse;min-width:100%;font-size:11px}th,td{border:1px solid #dbe3eb;padding:6px 8px;white-space:nowrap;text-align:right}th:first-child{text-align:left;min-width:245px;position:sticky;left:0;background:white;z-index:1}thead th{background:#dceaf4}thead th:first-child{background:#dceaf4;z-index:2}.group th,.group td{background:#dceaf4!important;font-weight:bold}.total th,.total td{background:#f0f4f7!important;font-weight:bold}.saldo th,.saldo td{background:#fff0cb!important;font-weight:bold}.pred{background:#fff7e5}.real{background:#eaf6ee}.buttons{display:flex;gap:8px;margin-top:10px}.buttons button{background:#1477ae;color:white;border:0;border-radius:4px;padding:9px;cursor:pointer}.muted{color:#62788b}.expand{cursor:pointer;border:1px solid #b8d0e0;border-radius:4px;background:#e9f3fa;color:#16547b;width:23px;height:23px;font-weight:bold}.item-row th{font-weight:600}.subitem th{color:#536e80;font-weight:400;background:#f7fafc!important}.subitem td{font-size:10px;color:#587083}.item-row:hover td,.item-row:hover th{filter:brightness(.97)}@media(max-width:800px){.metrics{grid-template-columns:repeat(2,1fr)}.filters{grid-template-columns:1fr}}
+
+.toolbar{display:flex;align-items:end;gap:10px;margin:10px 0}.toolbar label{min-width:230px}.toolbar select{height:34px;padding:6px}.toolbar button{background:#1477ae;color:#fff;border:0;border-radius:4px;padding:9px;cursor:pointer}
+.sheet{max-height:620px}.sheet table{width:max-content;min-width:100%;table-layout:fixed}
+.sheet th,.sheet td{padding:5px 7px;min-width:102px;font-size:11px}
+.sheet thead th{position:sticky;top:0;z-index:3}.sheet thead tr:nth-child(2) th{top:28px;z-index:3}
+.sheet th:first-child{min-width:250px;max-width:250px;width:250px;overflow:hidden;text-overflow:ellipsis}
+.sheet thead th:first-child{z-index:5}
+.sheet .weekend{background:#e7edf3!important;color:#596b7a}
+.sheet .month-summary{border-left:2px solid #8bafc2!important}
+.sheet .subitem th{padding-left:23px!important}
+.sheet .month-summary.pred{background:#ffedc5}.sheet .month-summary.real{background:#d5efdf}
+.sheet .saldo td{font-weight:bold}
+
+/* Coluna de estrutura compacta, mantendo a largura fixa sem invadir Previsto. */
+.sheet table{table-layout:fixed!important;width:max-content!important;min-width:100%!important}
+.sheet th:first-child,.sheet td:first-child{min-width:205px!important;max-width:205px!important;width:205px!important}
+.sheet thead tr:first-child th:first-child{width:205px!important;min-width:205px!important;max-width:205px!important}
+.sheet thead th:not(:first-child),.sheet tbody td{min-width:115px!important;width:115px!important;max-width:115px!important}
+.sheet th.period-head{cursor:pointer;user-select:none;min-width:230px!important;width:230px!important;max-width:230px!important}
+.sheet th.period-head:hover{outline:2px solid #2785b7;outline-offset:-2px}
+.sheet th.period-head.selected-period{background:#165f9d!important;color:white!important;box-shadow:inset 0 0 0 2px #0b3d65}
+.sheet [hidden],.hidden-panel[hidden]{display:none!important}
+.sheet tbody th:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.toolbar{flex-wrap:wrap}.toolbar button:disabled{opacity:.45;cursor:not-allowed}
+.hidden-panel{padding:10px;background:#f2f7fb;border:1px solid #c6d5df;border-radius:5px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.hidden-panel label{display:flex;gap:4px;align-items:center;font-weight:normal;cursor:pointer}.hidden-panel input{width:auto;margin:0}
+.hidden-panel button{background:#1477ae;color:white;border:0;border-radius:4px;padding:8px;cursor:pointer}
+#columnHelp{margin-bottom:8px}
+
+/* Correção: o primeiro Previsto pertence à segunda linha do cabeçalho,
+   portanto não pode herdar a largura da coluna Estrutura. */
+.sheet table{table-layout:fixed!important;width:max-content!important;min-width:100%!important}
+.sheet thead tr:first-child>th:first-child,
+.sheet tbody tr>th:first-child{width:205px!important;min-width:205px!important;max-width:205px!important}
+.sheet thead tr:nth-child(2)>th:first-child,
+.sheet thead tr:nth-child(2)>th,
+.sheet tbody tr>td{width:115px!important;min-width:115px!important;max-width:115px!important}
+.sheet thead tr:first-child>th.period-head{width:230px!important;min-width:230px!important;max-width:230px!important}
+.sheet tr.saldo-inicial>th,.sheet tr.saldo-inicial>td{background:#d8eafa!important;color:#103d62!important;font-weight:700!important;border-top:2px solid #5c98c7}
+.sheet tr.saldo-final>th,.sheet tr.saldo-final>td{background:#d7efe0!important;color:#175537!important;font-weight:700!important;border-top:2px solid #47946c;border-bottom:2px solid #47946c}
+.sheet tr.saldo-inicial>th:first-child,.sheet tr.saldo-final>th:first-child{background:inherit!important}
+.toolbar-separator{height:26px;border-left:1px solid #cbd7e1;margin:0 2px}
+@media print{ @page{size:landscape;margin:8mm}body{background:#fff!important}header{padding:5px!important}main{max-width:none!important;padding:0!important}.tabs,.filters,.metrics,.toolbar,.hidden-panel,#columnHelp,.muted{display:none!important}.card{padding:2px!important;break-inside:auto!important}.sheet{overflow:visible!important;max-height:none!important;border:0!important}.sheet table{width:max-content!important;min-width:0!important}.sheet th,.sheet td{font-size:8px!important;padding:2px!important}.sheet thead th{position:static!important}.sheet tbody th{position:static!important}th[hidden],td[hidden]{display:none!important}}
+
+/* Correção da fresta no cabeçalho fixo durante a rolagem. */
+.sheet table { border-collapse: separate !important; border-spacing: 0 !important; }
+.sheet thead tr:first-child { height: 30px !important; }
+.sheet thead tr:nth-child(2) { height: 30px !important; }
+.sheet thead tr:first-child > th { top: 0 !important; height: 30px !important; background-color: #dceaf4 !important; background-clip: padding-box; }
+.sheet thead tr:nth-child(2) > th { top: 30px !important; height: 30px !important; background-clip: padding-box; }
+.sheet thead tr:nth-child(2) > th.pred { background-color: #fff1d4 !important; }
+.sheet thead tr:nth-child(2) > th.real { background-color: #ddf0e4 !important; }
+.sheet thead tr:first-child > th:first-child { top: 0 !important; height: 60px !important; background-color: #dceaf4 !important; z-index: 8 !important; }
+.sheet thead tr:first-child > th.period-head { z-index: 6 !important; }
+.sheet thead tr:nth-child(2) > th { z-index: 5 !important; }
+.sheet tbody tr > th:first-child { z-index: 2 !important; background-color: #fff; }
+.sheet tbody tr.group > th:first-child { background-color: #dceaf4 !important; }
+.sheet tbody tr.total > th:first-child { background-color: #f0f4f7 !important; }
+.sheet tbody tr.saldo-inicial > th:first-child { background-color: #d8eafa !important; }
+.sheet tbody tr.saldo-final > th:first-child { background-color: #d7efe0 !important; }
+@media print { .sheet table { border-collapse: collapse !important; } }
+html,body{width:100%;max-width:100%;overflow-x:hidden}main{width:100%;max-width:100%;min-width:0;padding:10px}.card{max-width:100%;min-width:0}.filters,.metrics,.toolbar{max-width:100%;min-width:0}.sheet{width:100%;max-width:100%;overflow:auto}.sheet table{width:max-content!important;max-width:none!important}.tabs{max-width:100%;overflow-x:auto}.toolbar{flex-wrap:wrap}@media(max-width:1100px){.metrics{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:650px){.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.filters{grid-template-columns:minmax(0,1fr)}}</style><header>MyKey Caixa <span style="color:#657c8d;font-size:15px">• Integrado ao MyKey Caixa</span></header><main><div id="fluxoErro" hidden style="background:#fff0e8;color:#8b261c;border:1px solid #dfb3a7;padding:10px;margin-bottom:10px;border-radius:5px"></div><h2>Fluxo de Caixa por banco</h2><div class="card"><div class="tabs" id="tabs"></div><div class="filters"><label>Mês inicial<input type="month" id="month" value="2026-10"></label><label>Horizonte<select id="horizon"><option value="3">3 meses</option><option value="6" selected>6 meses</option><option value="12">12 meses</option><option value="24">24 meses</option></select></label></div></div><div class="card"><div class="metrics" id="metrics"></div></div><div class="card"><b style="font-size:16px">Demonstrativo diário e mensal — Previsto × Realizado</b><p class="muted">Cada dia tem Previsto e Realizado. Selecione uma ou várias datas pelo cabeçalho e oculte as colunas desejadas. Use “Resumo mensal” para visualizar o fechamento do mês. Finais de semana são destacados. Clique na seta para detalhar a composição.</p><div class="toolbar"><label>Visualização<select id="viewMode"><option value="daily">Diário — todos os dias</option><option value="monthly">Resumo mensal</option></select></label><button id="toggle">Recolher / expandir composições</button><button id="hideCols" type="button" disabled>Ocultar selecionadas (0)</button><button id="showCols" type="button">Mostrar colunas ocultas (0)</button><button id="showAllCols" type="button">Mostrar todas</button><span class="toolbar-separator"></span><button id="printFluxo" type="button">Imprimir</button><button id="savePdfFluxo" type="button">Salvar PDF</button><button id="excelFluxo" type="button">Baixar Excel (.xlsx)</button></div><div id="hiddenPanel" class="hidden-panel" hidden></div><div id="columnHelp" class="muted">Clique no cabeçalho de uma data para selecionar. Ctrl + clique seleciona várias; Shift + clique seleciona um intervalo. Cada data oculta Previsto e Realizado juntos.</div><div class="sheet"><table id="table"></table></div></div><p class="muted">Fluxo de Caixa integrado: realizado = extrato importado; previsto = obrigações ainda abertas. Movimentações não conciliadas aparecem em categoria própria. O saldo inicial considera a data de abertura da conta.</p></main><script>
+let banks=[];let state={accounts:[],bank:[],bills:[],moves:[],suppliers:[]};
+const groups=[];
+let selected=0,collapsed=false;let selectedColumns=new Set(),hiddenColumns=new Set(),lastSelectedColumn=null,currentPeriods=[];const expanded=new Set(["FUNCIONÁRIOS E TERCEIRIZADOS|Salários"]);const money=x=>Number(x).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});const cell=(v,kind)=>'<td class="'+kind+'">'+money(v)+'</td>';
+function makeDates(year,month,n,mode){
+ const periods=[];
+ for(let m=0;m<n;m++){
+  const first=new Date(year,month-1+m,1),last=new Date(year,month+m,0);
+  const ym=first.toLocaleDateString('pt-BR',{month:'short',year:'numeric'});
+  if(mode==='monthly')periods.push({key:ym,label:ym,from:first,to:last,monthly:true});
+  else for(let day=1;day<=last.getDate();day++){
+   const date=new Date(year,month-1+m,day);
+   periods.push({key:`${year}-${month+m}-${day}`,label:String(day).padStart(2,'0')+'/'+String(date.getMonth()+1).padStart(2,'0'),from:date,to:date,weekend:[0,6].includes(date.getDay()),monthly:false});
+  }
+ }
+ return periods;
+}
+function parseIso(v){return /^\d{4}-\d{2}-\d{2}$/.test(String(v||''))?String(v):''}
+function dateIso(date){return [date.getFullYear(),String(date.getMonth()+1).padStart(2,'0'),String(date.getDate()).padStart(2,'0')].join('-')}
+function moneyNum(v){const n=Number(v);return Number.isFinite(n)?n:0}
+function render(){
+ if(!banks.length){document.getElementById('tabs').innerHTML='Nenhuma conta cadastrada.';document.getElementById('table').innerHTML='';document.getElementById('metrics').innerHTML='';return}
+ if(selected>=banks.length)selected=0;
+ const [bank,owner,opening,accountId,openingDate]=banks[selected];
+ const n=Number(document.getElementById('horizon').value),[year,month]=document.getElementById('month').value.split('-').map(Number);
+ const mode=document.getElementById('viewMode').value,periods=makeDates(year,month,n,mode);currentPeriods=periods;selectedColumns.clear();lastSelectedColumn=null;
+ const fmt=v=>Number(v).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+ const start=periods[0]?.from,end=periods.at(-1)?.to;
+ if(!start||!end)return;
+ const startIso=dateIso(start),endIso=dateIso(end);
+ const records=[];
+ const suppliers=new Map((state.suppliers||[]).map(x=>[x.id,x.name]));
+ for(const x of state.bank||[]){
+  if(x.account!==accountId)continue;
+  const date=parseIso(x.date);if(!date||date<openingDate||date>endIso)continue;
+  const amount=moneyNum(x.amount);if(!amount)continue;
+  const label=x.match?'Movimentações conciliadas':'Movimentações a conciliar';
+  records.push({date,amount,kind:'real',group:amount>=0?'ENTRADAS':'SAÍDAS',label,detail:String(x.description||'Movimentação bancária')});
+ }
+ for(const x of state.bills||[]){
+  if(x.entryAccount!==accountId)continue;
+  const date=parseIso(x.due);if(!date||date<openingDate||date>endIso)continue;
+  const remaining=Math.max(0,moneyNum(x.amount)-moneyNum(x.paid));if(remaining<.005)continue;
+  const income=x.entryKind==='Receita';
+  records.push({date,amount:income?remaining:-remaining,kind:'prev',group:income?'ENTRADAS':'SAÍDAS',label:String(x.category||'Sem categoria'),detail:(suppliers.get(x.supplierId)||x.name||'Sem cadastro')+' — '+String(x.description||'Obrigação')});
+ }
+ // Saldo de abertura: referência do saldo inicial é o fechamento da data informada.
+ // Quando o período começa depois, somar somente os movimentos anteriores ao início.
+ const openingBase=moneyNum(opening);
+ const earlier=(state.bank||[]).filter(x=>x.account===accountId&&parseIso(x.date)>openingDate&&parseIso(x.date)<startIso).reduce((sum,x)=>sum+moneyNum(x.amount),0);
+ const initialBalance=openingBase+earlier;
+ const groupMap=new Map();
+ for(const rec of records){let g=groupMap.get(rec.group);if(!g){g=new Map();groupMap.set(rec.group,g)}let arr=g.get(rec.label);if(!arr){arr=[];g.set(rec.label,arr)}arr.push(rec)}
+ document.getElementById('tabs').innerHTML=banks.map((b,i)=>'<button class="'+(i===selected?'on':'')+'" data-i="'+i+'">'+escapeHtml(b[0])+' ('+escapeHtml(b[1])+')</button>').join('');
+ let html='<thead><tr><th rowspan="2">Estrutura</th>';
+ for(const p of periods)html+='<th colspan="2" data-period="'+escapeHtml(p.key)+'" class="period-head '+(p.weekend?'weekend ':'')+(p.monthly?'month-summary':'')+'" title="Selecionar data">'+escapeHtml(p.label)+'</th>';
+ html+='</tr><tr>'+periods.map(p=>'<th class="pred">Previsto</th><th class="real">Realizado</th>').join('')+'</tr></thead><tbody>';
+ const sum=periods.map(()=>({pi:0,po:0,ri:0,ro:0}));
+ const val=(r,p)=>r.filter(x=>x.date>=dateIso(p.from)&&x.date<=dateIso(p.to)).reduce((a,x)=>a+Math.abs(x.amount),0);
+ const row=(label,values,cls='')=>{html+='<tr class="'+cls+'"><th>'+escapeHtml(label)+'</th>'+values.map((v,i)=>'<td class="'+(i%2?'real':'pred')+'">'+fmt(v)+'</td>').join('')+'</tr>'};
+ const headerGroups=['ENTRADAS','SAÍDAS'];
+ // Accumulate only parent rows; detail lines never affect totals.
+ for(const group of headerGroups){
+  const entries=groupMap.get(group)||new Map();
+  html+='<tr class="group"><th>'+group+'</th><td colspan="'+periods.length*2+'"></td></tr>';
+  const subtotal=Array(periods.length*2).fill(0);
+  for(const [label,items] of [...entries].sort((a,b)=>a[0].localeCompare(b[0],'pt-BR'))){
+   const key=group+'|'+label,open=expanded.has(key);
+   const values=periods.flatMap(p=>[val(items.filter(x=>x.kind==='prev'),p),val(items.filter(x=>x.kind==='real'),p)]);
+   values.forEach((v,i)=>{subtotal[i]+=v;const x=sum[Math.floor(i/2)];const field=(group==='ENTRADAS'?(i%2?'ri':'pi'):(i%2?'ro':'po'));x[field]+=v});
+   if(!collapsed){
+    html+='<tr class="item-row"><th><button type="button" class="expand" data-key="'+escapeHtml(key)+'">'+(open?'▾':'▸')+'</button> '+escapeHtml(label)+'</th>'+values.map((v,i)=>'<td class="'+(i%2?'real':'pred')+'">'+fmt(v)+'</td>').join('')+'</tr>';
+    if(open){for(const detail of [...new Set(items.map(x=>x.detail))].sort((a,b)=>a.localeCompare(b,'pt-BR'))){
+     const detailItems=items.filter(x=>x.detail===detail);
+     row('↳ '+detail,periods.flatMap(p=>[val(detailItems.filter(x=>x.kind==='prev'),p),val(detailItems.filter(x=>x.kind==='real'),p)]),'subitem');
+    }}
+   }
+  }
+  row('Subtotal '+group,subtotal,'total');
+ }
+ const openingValues=[],closing=[],net=[];let balanceReal=initialBalance,balanceProjected=initialBalance;
+ for(const t of sum){
+  openingValues.push(balanceProjected,balanceReal);
+  const actual=t.ri-t.ro,projected=actual+t.pi-t.po;
+  net.push(projected,actual);
+  balanceProjected+=projected;balanceReal+=actual;
+  closing.push(balanceProjected,balanceReal);
+ }
+ // Saldo inicial exibido antes das entradas e saídas.
+ const openingRow='<tr class="saldo saldo-inicial"><th>SALDO INICIAL</th>'+openingValues.map((v,i)=>'<td class="'+(i%2?'real':'pred')+'">'+fmt(v)+'</td>').join('')+'</tr>';
+ html=html.replace('<tbody>','<tbody>'+openingRow);
+ row('GERAÇÃO DE CAIXA',net,'total');row('SALDO FINAL',closing,'saldo saldo-final');
+ html+='</tbody>';document.getElementById('table').innerHTML=html;applyColumnVisibility();
+ const vals=[['Saldo de abertura',initialBalance],['Entradas realizadas',sum.reduce((a,x)=>a+x.ri,0)],['Saídas realizadas',sum.reduce((a,x)=>a+x.ro,0)],['Obrigações previstas',sum.reduce((a,x)=>a+x.po,0)],['Saldo final projetado',balanceProjected]];
+ document.getElementById('metrics').innerHTML=vals.map(([label,v])=>'<div class="metric"><small>'+label+'</small><b>'+fmt(v)+'</b></div>').join('');
+}
+function escapeHtml(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+window.addEventListener('error',event=>{
+ const el=document.getElementById('fluxoErro');
+ if(el){el.hidden=false;el.textContent='Falha no Fluxo de Caixa: '+(event.message||'erro não identificado')+'. Os dados do SQLite não foram alterados.'}
+ console.error('MyKey Fluxo:',event.error||event.message);
+});
+window.addEventListener('message',event=>{
+ if(event.origin!==location.origin||event.data?.type!=='MYKEY_FLUXO_DADOS')return;
+ const x=event.data.state;
+ if(!x||!Array.isArray(x.accounts)||!Array.isArray(x.bank)||!Array.isArray(x.bills))return;
+ state=x;banks=x.accounts.map(a=>[a.name,a.owner,a.opening,a.id,a.openingDate||'1900-01-01']);
+ const first=banks.find(b=>b[4]!=='1900-01-01');
+ if(first){const month=first[4].slice(0,7);document.getElementById('month').value=month}
+ selected=0;
+ try{render()}catch(err){
+  const el=document.getElementById('fluxoErro');
+  if(el){el.hidden=false;el.textContent='Erro ao montar o fluxo: '+err.message+'. Nenhum dado foi alterado.'}
+  console.error(err);
+ }
+});
+function applyColumnVisibility(){
+ const table=document.getElementById('table');if(!table)return;
+ const visible=currentPeriods.filter(p=>!hiddenColumns.has(p.key));
+ if(!visible.length&&currentPeriods.length){hiddenColumns.delete(currentPeriods[0].key);visible.push(currentPeriods[0]);}
+ const header=table.tHead?.rows[0],sub=table.tHead?.rows[1];
+ if(!header||!sub)return;
+ for(let i=0;i<currentPeriods.length;i++){
+  const period=currentPeriods[i],hide=hiddenColumns.has(period.key);
+  const h=header.cells[i+1];if(h){h.hidden=hide;h.classList.toggle('selected-period',selectedColumns.has(period.key));h.setAttribute('aria-selected',String(selectedColumns.has(period.key)));}
+  for(const k of [i*2,i*2+1]){if(sub.cells[k])sub.cells[k].hidden=hide;}
+ }
+ for(const tr of table.tBodies[0].rows){
+  if(tr.classList.contains('group')){const td=tr.cells[1];if(td)td.colSpan=visible.length*2;continue;}
+  for(let i=0;i<currentPeriods.length;i++){
+   for(const offset of [0,1]){const td=tr.cells[i*2+1+offset];if(td)td.hidden=hiddenColumns.has(currentPeriods[i].key);}
+  }
+ }
+ document.getElementById('hideCols').disabled=!selectedColumns.size;
+ document.getElementById('hideCols').textContent='Ocultar selecionadas ('+selectedColumns.size+')';
+ document.getElementById('showCols').textContent='Mostrar colunas ocultas ('+[...hiddenColumns].filter(k=>currentPeriods.some(p=>p.key===k)).length+')';
+}
+function selectPeriod(event){
+ const h=event.target.closest('th[data-period]');if(!h)return;
+ const key=h.dataset.period,index=currentPeriods.findIndex(p=>p.key===key);
+ if(index<0)return;
+ if(event.shiftKey&&lastSelectedColumn!==null){
+  if(!event.ctrlKey&&!event.metaKey)selectedColumns.clear();
+  for(let i=Math.min(lastSelectedColumn,index);i<=Math.max(lastSelectedColumn,index);i++){
+   if(!hiddenColumns.has(currentPeriods[i].key))selectedColumns.add(currentPeriods[i].key);
+  }
+ }else if(event.ctrlKey||event.metaKey){
+  selectedColumns.has(key)?selectedColumns.delete(key):selectedColumns.add(key);
+  lastSelectedColumn=index;
+ }else{
+  selectedColumns.clear();selectedColumns.add(key);lastSelectedColumn=index;
+ }
+ applyColumnVisibility();
+}
+function hideSelectedPeriods(){
+ if(!selectedColumns.size)return;
+ const visible=currentPeriods.filter(p=>!hiddenColumns.has(p.key));
+ if(visible.every(p=>selectedColumns.has(p.key)))return alert('Mantenha ao menos uma data visível.');
+ for(const key of selectedColumns)hiddenColumns.add(key);
+ selectedColumns.clear();lastSelectedColumn=null;applyColumnVisibility();
+}
+function showHiddenPanel(){
+ const panel=document.getElementById('hiddenPanel');
+ if(!panel.hidden){panel.hidden=true;return;}
+ const hidden=currentPeriods.filter(p=>hiddenColumns.has(p.key));
+ if(!hidden.length)return alert('Não há colunas ocultas nesta visualização.');
+ panel.replaceChildren();
+ const heading=document.createElement('strong');heading.textContent='Selecione as datas que deseja mostrar novamente:';panel.append(heading);
+ for(const p of hidden){const label=document.createElement('label');const check=document.createElement('input');check.type='checkbox';check.value=p.key;label.append(check,document.createTextNode(' '+p.label));panel.append(label);}
+ const button=document.createElement('button');button.type='button';button.textContent='Mostrar selecionadas';button.onclick=()=>{
+  for(const check of panel.querySelectorAll('input:checked'))hiddenColumns.delete(check.value);
+  panel.hidden=true;applyColumnVisibility();
+ };panel.append(button);panel.hidden=false;
+}
+document.getElementById('tabs').onclick=e=>{const b=e.target.closest('button[data-i]');if(b){selected=Number(b.dataset.i);render()}};document.getElementById('horizon').onchange=render;document.getElementById('viewMode').onchange=render;document.getElementById('month').onchange=render;document.getElementById('toggle').onclick=()=>{collapsed=!collapsed;if(collapsed)expanded.clear();render()};document.getElementById('table').addEventListener('click',e=>{if(e.target.closest('th[data-period]')){selectPeriod(e);return}const b=e.target.closest('button.expand');if(!b)return;const k=b.dataset.key;expanded.has(k)?expanded.delete(k):expanded.add(k);render()});document.getElementById('hideCols').onclick=hideSelectedPeriods;document.getElementById('showCols').onclick=showHiddenPanel;document.getElementById('showAllCols').onclick=()=>{hiddenColumns.clear();selectedColumns.clear();document.getElementById('hiddenPanel').hidden=true;applyColumnVisibility()};render();
+
+// Exportação XLSX autossuficiente: não requer rede, CDN ou biblioteca externa.
+function exportRows(){
+ const table=document.getElementById('table');
+ const visibleIndices=currentPeriods.map((p,i)=>hiddenColumns.has(p.key)?-1:i).filter(i=>i>=0);
+ const rows=[];
+ rows.push(['Estrutura',...visibleIndices.flatMap(i=>[currentPeriods[i].label+' - Previsto',currentPeriods[i].label+' - Realizado'])]);
+ for(const tr of table.tBodies[0].rows){
+  const first=tr.cells[0]?.innerText.trim()||'';
+  if(tr.classList.contains('group')){rows.push([first]);continue;}
+  const vals=visibleIndices.flatMap(i=>[tr.cells[1+i*2]?.innerText.trim()||'',tr.cells[2+i*2]?.innerText.trim()||'']);
+  rows.push([first,...vals]);
+ }
+ return rows;
+}
+function xlsxXml(value){return String(value).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&apos;')}
+function xlsxCol(index){let result='';for(let n=index+1;n;n=Math.floor((n-1)/26))result=String.fromCharCode(65+(n-1)%26)+result;return result}
+function xlsxFileParts(rows){
+ const values=rows.map((row,ri)=>'<row r="'+(ri+1)+'">'+row.map((value,ci)=>{
+  const ref=xlsxCol(ci)+(ri+1),trimmed=String(value).trim();
+  const numeric=/^-?R\$\s*[\d.]+,\d{2}$/.test(trimmed)?Number(trimmed.replace('R$','').replace(/\./g,'').replace(',','.')):null;
+  if(numeric!==null&&Number.isFinite(numeric))return '<c r="'+ref+'" s="1"><v>'+numeric+'</v></c>';
+  return '<c r="'+ref+'" t="inlineStr"><is><t xml:space="preserve">'+xlsxXml(value)+'</t></is></c>';
+ }).join('')+'</row>').join('');
+ const sheet='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetViews><sheetView workbookViewId="0"><pane xSplit="1" ySplit="1" topLeftCell="B2" activePane="bottomRight" state="frozen"/></sheetView></sheetViews><cols><col min="1" max="1" width="36" customWidth="1"/><col min="2" max="'+Math.max(2,rows[0].length)+'" width="20" customWidth="1"/></cols><sheetData>'+values+'</sheetData></worksheet>';
+ return {
+  '[Content_Types].xml':'<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>',
+  '_rels/.rels':'<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>',
+  'xl/workbook.xml':'<?xml version="1.0" encoding="UTF-8"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="Fluxo de Caixa" sheetId="1" r:id="rId1"/></sheets></workbook>',
+  'xl/_rels/workbook.xml.rels':'<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>',
+  'xl/styles.xml':'<?xml version="1.0" encoding="UTF-8"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><numFmts count="1"><numFmt numFmtId="164" formatCode="&quot;R$&quot; #,##0.00;[Red]-&quot;R$&quot; #,##0.00"/></numFmts><fonts count="1"><font><sz val="11"/><name val="Calibri"/></font></fonts><fills count="2"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill></fills><borders count="1"><border/></borders><cellStyleXfs count="1"><xf numFmtId="0"/></cellStyleXfs><cellXfs count="2"><xf numFmtId="0" xfId="0"/><xf numFmtId="164" xfId="0" applyNumberFormat="1"/></cellXfs></styleSheet>',
+  'xl/worksheets/sheet1.xml':sheet
+ };
+}
+function zipStored(files){
+ const encoder=new TextEncoder(),chunks=[],directory=[];let offset=0;
+ const u16=n=>[n&255,(n>>>8)&255],u32=n=>[n&255,(n>>>8)&255,(n>>>16)&255,(n>>>24)&255];
+ const crcTable=new Uint32Array(256);for(let i=0;i<256;i++){let c=i;for(let j=0;j<8;j++)c=c&1?0xedb88320^(c>>>1):c>>>1;crcTable[i]=c>>>0}
+ const crc32=data=>{let crc=0xffffffff;for(const b of data)crc=crcTable[(crc^b)&255]^(crc>>>8);return (crc^0xffffffff)>>>0};
+ for(const [name,contents] of Object.entries(files)){
+  const filename=encoder.encode(name),data=encoder.encode(contents),crc=crc32(data);
+  const local=new Uint8Array([...u32(0x04034b50),...u16(20),...u16(0x0800),...u16(0),...u16(0),...u16(0),...u32(crc),...u32(data.length),...u32(data.length),...u16(filename.length),...u16(0),...filename]);
+  chunks.push(local,data);
+  directory.push(new Uint8Array([...u32(0x02014b50),...u16(20),...u16(20),...u16(0x0800),...u16(0),...u16(0),...u16(0),...u32(crc),...u32(data.length),...u32(data.length),...u16(filename.length),...u16(0),...u16(0),...u16(0),...u16(0),...u32(0),...u32(offset),...filename]));
+  offset+=local.length+data.length;
+ }
+ const dirLength=directory.reduce((n,x)=>n+x.length,0),count=directory.length;
+ const end=new Uint8Array([...u32(0x06054b50),...u16(0),...u16(0),...u16(count),...u16(count),...u32(dirLength),...u32(offset),...u16(0)]);
+ return new Blob([...chunks,...directory,end],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+}
+function baixarExcelFluxo(){
+ try{
+  const rows=exportRows(),blob=zipStored(xlsxFileParts(rows));
+  const url=URL.createObjectURL(blob),a=document.createElement('a');
+  const name=banks[selected][0].normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/gi,'_');
+  a.href=url;a.download='Fluxo_de_Caixa_'+name+'_'+document.getElementById('month').value+'.xlsx';
+  document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),10000);
+ }catch(error){alert('Não foi possível gerar o Excel: '+error.message)}
+}
+function imprimirFluxo(salvarPdf){
+ if(salvarPdf)alert('Na janela de impressão, selecione “Salvar como PDF” como destino.');
+ window.print();
+}
+const hojeFluxo=new Date();
+const mesInicialFluxo=document.getElementById('month');
+if(mesInicialFluxo)mesInicialFluxo.value=hojeFluxo.getFullYear()+'-'+String(hojeFluxo.getMonth()+1).padStart(2,'0');
+document.getElementById('printFluxo').onclick=()=>imprimirFluxo(false);
+document.getElementById('savePdfFluxo').onclick=()=>imprimirFluxo(true);
+document.getElementById('excelFluxo').onclick=baixarExcelFluxo;
+
+</script></html>

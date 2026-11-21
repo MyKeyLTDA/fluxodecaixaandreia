@@ -1,0 +1,9 @@
+MYKEY CAIXA — Supabase + Netlify
+
+Supabase (projeto "Fluxo de Caixa"): supabase/01_schema.sql (já aplicado). Autorize usuários com:
+  insert into public.mykey_usuarios_autorizados(user_id) select id from auth.users where email = 'EMAIL';
+Desative "Allow new users to sign up" em Authentication > Sign In / Providers.
+Os dados são importados à parte (nunca versionar dados financeiros).
+
+Netlify: variáveis SUPABASE_URL e SUPABASE_ANON_KEY (chave publicável). Deploy a partir do Git (netlify.toml na raiz).
+Importação de extrato, backup SQLite e relatórios de servidor continuam no MyKey Caixa local.

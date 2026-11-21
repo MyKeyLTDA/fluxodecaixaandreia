@@ -1,0 +1,1 @@
+export async function handler(){return {statusCode:501,headers:{'Content-Type':'application/json'},body:JSON.stringify({erro:'Recurso indisponível nesta versão de homologação. Utilize o MyKey Caixa local para importação de extratos, relatórios de servidor e backup SQLite.'})};}

@@ -1,0 +1,13 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MyKey Caixa — Acesso</title><style>body{font:15px Arial;background:#eef3f8;color:#234;margin:0;display:grid;place-items:center;min-height:100vh}.card{background:white;border-radius:12px;padding:28px;width:min(380px,90vw);box-shadow:0 3px 15px #0001}h1{color:#1268a5}label{display:block;margin:14px 0}input{display:block;width:100%;box-sizing:border-box;padding:11px;margin-top:6px;border:1px solid #bdccd8;border-radius:5px}button{background:#1268a5;color:white;border:0;padding:11px;border-radius:5px;cursor:pointer;width:100%}#erro{color:#a32}</style></head><body><div class="card"><h1>MyKey Caixa</h1><p>Acesso financeiro restrito</p><form id="form"><label>E-mail<input id="email" type="email" autocomplete="username" required></label><label>Senha<input id="password" type="password" autocomplete="current-password" required></label><button id="btn">Entrar</button></form><p id="erro" role="alert"></p></div><script src="/config.js"></script><script>
+document.getElementById('form').addEventListener('submit',async e=>{
+ e.preventDefault();const btn=document.getElementById('btn'),erro=document.getElementById('erro');btn.disabled=true;erro.textContent='';
+ try{
+  const c=window.MYKEY_CONFIG;
+  if(!c.supabaseUrl.startsWith('https://')||c.supabaseUrl.includes('SEU-PROJETO')||c.supabaseAnonKey.includes('SUA_CHAVE'))throw Error('Configure public/config.js antes de entrar.');
+  const r=await fetch(c.supabaseUrl.replace(/\/$/,'')+'/auth/v1/token?grant_type=password',{method:'POST',headers:{'Content-Type':'application/json',apikey:c.supabaseAnonKey},body:JSON.stringify({email:document.getElementById('email').value,password:document.getElementById('password').value})});
+  const data=await r.json();if(!r.ok||!data.access_token)throw Error('E-mail ou senha inválidos.');
+  sessionStorage.setItem('mykey_session',JSON.stringify({access_token:data.access_token,refresh_token:data.refresh_token,expires_at:Date.now()+data.expires_in*1000}));
+  location.replace('/');
+ }catch(err){erro.textContent=err.message}finally{btn.disabled=false}
+});
+</script></body></html>
